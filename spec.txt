@@ -1,0 +1,11 @@
+# Estados
+## HOTP
+* Contador Cliente
+* Contador Servidor
+* Última Senha Válida
+
+## TOTP 
+* Epoch Server
+* Epoch Client
+* Steps Client
+* Setps Servidor 

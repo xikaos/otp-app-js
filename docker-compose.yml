@@ -1,0 +1,31 @@
+#Container Setup for Development
+  version: '2'
+
+  # Named volumes
+  volumes:
+    #Redis Data
+    otp-app-js-redis-data:
+      driver: local
+
+  services:
+    # Caching
+    cache:
+      image: redis:4.0
+      container_name: otp-app-js-redis
+      command: --appendonly yes
+      volumes:
+        - otp-app-js-redis-data:/data
+      ports:
+        - "6379:6379"
+
+    app:
+      image: ambientum/node:11
+      container_name: otp-app-js-app
+      command: tail -f /dev/null
+      environment:
+        - NODE_ENV=local
+      ports:
+        - 80:8080
+        - 3000:3000
+      volumes:
+        - .:/var/www/app
