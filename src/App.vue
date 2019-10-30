@@ -13,14 +13,7 @@
         </div>
     </section>
     <one-time-password></one-time-password>
-    <section class="section">
-        <div class="container">
-            <div class="columns has-text-centered has-text-info">
-                <param-column id="param-1"></param-column>
-                <param-column id="param-2"></param-column>
-            </div>
-        </div>
-    </section>
+    <hotp-display></hotp-display>
     <inputs v-on:change-implementation="alert(implementation)"></inputs>
   </div>
 </template>
@@ -28,12 +21,12 @@
 <script>
 import Inputs from './components/Inputs.vue'
 import OneTimePassword from './components/OneTimePassword.vue'
-import ParamColumn from './components/ParamColumn.vue'
+import HotpDisplay from './components/HOTPDisplay.vue'
 
 export default {
   name: 'app',
   components: {
-    Inputs, OneTimePassword, ParamColumn
+    Inputs, OneTimePassword, HotpDisplay
   }
 }
 </script>
