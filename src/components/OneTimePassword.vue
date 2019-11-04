@@ -16,10 +16,6 @@
 <script>
     export default {
         name: 'OneTimePassword',
-        data() {
-            return {
-                otp: "Not generated yet!",
-            }
-        }
+        props: ['otp']
     }
 </script>

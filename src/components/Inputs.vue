@@ -72,18 +72,12 @@
             },
             increaseCounter(){
                 this.counter += 1;
-                document.querySelector('#app > section:nth-child(3) > div > div > div:nth-child(1) > div > h5').innerHTML = this.counter;
             },
             updateOTP(){
-                document.querySelector('#otp').innerHTML = this.otp;
+                this.$emit('generate', this.otp)
             },
             changeImplementation(){
-                if(this.implementation == "HOTP"){
-                    document.querySelector('#param-1 h4').innerHTML = 'Client Counter';
-                    document.querySelector('#param-2 h4').innerHTML = 'Server Counter';
-                } else {
-                    document.querySelector('#param-1 h4').innerHTML = 'Client Time';
-                }
+                this.$emit('implementation', this.implementation);
             }
         }
     }

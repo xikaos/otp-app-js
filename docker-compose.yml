@@ -4,28 +4,35 @@
   # Named volumes
   volumes:
     #Redis Data
-    otp-app-js-redis-data:
+    meu-otp-redis-data:
       driver: local
 
   services:
     # Caching
     cache:
       image: redis:4.0
-      container_name: otp-app-js-redis
+      container_name: meu-otp-redis
       command: --appendonly yes
       volumes:
-        - otp-app-js-redis-data:/data
+        - meu-otp-redis-data:/data
       ports:
         - "6379:6379"
 
     app:
       image: ambientum/node:11
-      container_name: otp-app-js-app
+      container_name: meu-otp-app
       command: tail -f /dev/null
       environment:
         - NODE_ENV=local
       ports:
-        - 80:8080
         - 3000:3000
       volumes:
         - .:/var/www/app
+
+    proxy:
+      container_name: meu-otp-proxy
+      build:
+        context: ./docker
+        dockerfile: Proxy.Dockerfile
+      ports:
+        - 80:80
