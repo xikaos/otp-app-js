@@ -12,13 +12,23 @@
                         </div>
                     </div>
                     <div class="column">
+                        <div class="select is-large">
+                          <select v-on:change="changeUser(user)" v-model="user">
+                            <option v-for="user in users">{{ user.email}}</option>
+                          </select>
+                        </div>    
+                    </div>
+                    <div class="column">
                         <input type="text" class="input is-large" placeholder="passphrase" v-model="passphrase">
                     </div>
                     <div v-if="implementation == 'HOTP'" class="column">
                         <button class="button is-info is-large" @click="increaseCounter()">Event</button>
                     </div>
                     <div class="column">
-                        <button class="button is-primary is-large" @click="calculateOTP(passphrase, seed)">Submit</button>
+                        <button class="button is-primary is-large" @click="calculateOTP(passphrase, seed)">Compute</button>
+                    </div>
+                    <div class="column">
+                        <button class="button is-primary is-large is-link" @click="submitForm(passphrase, seed)">Validate</button>
                     </div>
                 </div>
             </div>
@@ -35,7 +45,13 @@
                 implementation: "HOTP",
                 otp: "Not calculated",
                 counter: 0,
-                generator: require('otpauth')
+                timestamp: 0,
+                generator: require('otpauth'),
+                users: [
+                    {email: 'pig@app.io'},
+                    {email: 'wolf@app.io'}
+                ],
+                user: 'pig@app.io'
             }
         },
         methods: {
@@ -56,7 +72,8 @@
                     algorithm: 'SHA1',
                     digits: 6,
                     period: 30,
-                    secret: passphrase
+                    secret: passphrase,
+                    timestamp: this.timestamp
                 });
 
                 // Generate TOTP token.
@@ -78,7 +95,62 @@
             },
             changeImplementation(){
                 this.$emit('implementation', this.implementation);
+            },
+            changeUser(user){
+                this.user = user
+            },
+            swal(options){
+                this.$swal(options)
+            },
+            submitForm(){
+                if(this.implementation == "HOTP"){
+                    alert(HOTP)
+                } 
+
+                if(this.implementation == "TOTP"){
+                    var options = {
+                        method: 'POST', 
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            otp: this.otp,
+                            email: this.user
+                        })
+                    }
+
+                    fetch(
+                        "/api/totp/validate",
+                        options 
+                    ).then((response) => {
+                        return response.text()
+                            .then((txt) => {
+                               return txt == "true" 
+                            })
+                    }).then((valid) => {
+                        if(valid){
+                            this.swal({
+                                title: 'Valid OTP 😁',
+                                text: 'The OTP you sent is valid.',
+                                type: 'success'
+                            })
+                        } else {
+                            this.swal({ 
+                                title:'Invalid OTP 💩',
+                                text: 'The passphrase is wrong or you are out of sync',
+                                type: 'error'
+                            })
+                        }
+                    })
+                }
             }
         }
     }
 </script>
+<style scoped>
+    .button {
+        width: 125px;
+    }
+
+    .swal2-header .swal2-content {
+        font-family: Quicksand;
+    }
+</style>

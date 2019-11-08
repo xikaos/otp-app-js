@@ -34,18 +34,23 @@
 <script>
     export default {
         name: 'TotpDisplay',
-        props: ['server_timestamp', 'client_timestamp'],
+        data() {
+            return {
+                'server_timestamp': 0,
+                'client_timestamp': 0
+            }
+        },
         methods: {
             pollServer(){
                 fetch('http://localhost/api/totp/params')
                     .then((res) => {
                         res.text().then((txt) => {
-                            this.server_timestamp = txt;
+                            this.server_timestamp = txt / 1000;
                         });
                     })
             },
             getCurrentTimestamp(){
-                this.client_timestamp = new Date().getTime()
+                this.client_timestamp = (new Date().getTime() / 1000);
             }
 
         },
