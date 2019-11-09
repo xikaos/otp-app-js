@@ -13,9 +13,9 @@
       </section>
     </div>
     <one-time-password :otp="otp"></one-time-password>
-    <hotp-display v-if="isHOTP && god_mode"></hotp-display>
+    <hotp-display v-if="isHOTP && god_mode" :client_counter="this.counter"></hotp-display>
     <totp-display v-if="isTOTP && god_mode"></totp-display>
-    <inputs @implementation="changeDisplay" @generate="changeOTP" :timestamp="clientTimestamp"></inputs>
+    <inputs @implementation="changeDisplay" @generate="changeOTP"  @increase-counter="changeCounter" :timestamp="clientTimestamp"></inputs>
   </div>
 </template>
 
@@ -34,10 +34,14 @@ export default {
     return {
       otp: 'Not generated yet',
       implementation: 'HOTP',
-      god_mode: false
+      god_mode: true,
+      counter: 0
     }
   },
   methods: {
+    changeCounter(counter){
+        this.counter = counter;
+    },
     changeDisplay(impl){
       this.implementation = impl;
     },

@@ -88,7 +88,8 @@
                 this.updateOTP()
             },
             increaseCounter(){
-                this.counter += 1;
+                this.counter = this.counter + 1;
+                this.$emit('increase-counter', this.counter)
             },
             updateOTP(){
                 this.$emit('generate', this.otp)
@@ -104,7 +105,39 @@
             },
             submitForm(){
                 if(this.implementation == "HOTP"){
-                    alert(HOTP)
+                    var options = {
+                        method: 'POST', 
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            otp: this.otp,
+                            email: this.user
+                        })
+                    }
+
+                    fetch(
+                        "/api/hotp/validate",
+                        options 
+                    ).then((response) => {
+                        return response.text()
+                            .then((txt) => {
+                               return txt == "true" 
+                            })
+                    }).then((valid) => {
+                        if(valid){
+                            this.swal({
+                                title: 'Valid OTP 😁',
+                                text: 'The OTP you sent is valid.',
+                                type: 'success'
+                            })
+                        } else {
+                            this.swal({ 
+                                title:'Invalid OTP 💩',
+                                text: 'The passphrase is wrong or you are out of sync',
+                                type: 'error'
+                            })
+                        }
+                    })
+
                 } 
 
                 if(this.implementation == "TOTP"){
