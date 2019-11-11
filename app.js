@@ -15,17 +15,19 @@ let users = [
 ];
 
 var counter = 0;
-var last_otp = "Undefined"
+var last_totp = "Undefined."
+var last_hotp = "Undefined."
+var count_window = 5
 
 app.use(parser.json())
 
 
 app.get('/api/totp/params', function(req, res){
-    res.send(200, new Date().getTime());
+    res.send(200, {timestamp: new Date().getTime(), last_otp: last_totp});
 })
 
 app.get('/api/hotp/params', function(req, res){
-    res.send(200, counter);
+    res.send(200, {counter : counter, last_otp: last_hotp});
 });
 
 app.post('/api/totp/validate', function(req, res){
@@ -47,7 +49,11 @@ app.post('/api/totp/validate', function(req, res){
 
     let is_valid = (client_otp == server_otp)
 
-    res.send(200, is_valid);
+    if(is_valid){
+        last_totp = server_otp;
+    }
+
+    res.send(200, {valid: is_valid, last_valid: last_totp});
 })
 
 app.post('/api/hotp/validate', function(req,res){
@@ -66,13 +72,19 @@ app.post('/api/hotp/validate', function(req,res){
 
     server_otp = hotp.generate()
 
-    let is_valid = (client_otp == server_otp)
+    let diff = hotp.validate({token: client_otp,secret: user.password,counter: counter,window: count_window})
 
-    if(is_valid){
-        counter += 1;
+    if(diff == undefined){
+       return res.send(400, {valid: false});
+    } else {
+        if(diff >= 0 && diff <= count_window){
+            counter += 1
+            last_hotp = server_otp
+            return res.send(200, {valid: true, last_otp: last_hotp});
+        }
     }
-    
-    res.send(200, is_valid);
+
+    return res.send(400, {valid: false});
 })
 
 app.listen(3000, function () {

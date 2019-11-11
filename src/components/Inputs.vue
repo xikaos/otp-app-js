@@ -5,7 +5,7 @@
                 <div class="columns has-text-black has-text-centered">
                     <div class="column">
                         <div class="select is-large">
-                          <select v-model="implementation" v-on:change="changeImplementation()">
+                          <select v-model="implementation" @change="changeImplementation">
                             <option value="HOTP">HOTP</option>
                             <option value="TOTP">TOTP</option>
                           </select>
@@ -13,22 +13,22 @@
                     </div>
                     <div class="column">
                         <div class="select is-large">
-                          <select v-on:change="changeUser(user)" v-model="user">
-                            <option v-for="user in users">{{ user.email}}</option>
+                          <select v-model="user" @change="changeUser()">
+                            <option v-for="user in this.store.state.users">{{ user.email }}</option>
                           </select>
                         </div>    
                     </div>
                     <div class="column">
-                        <input type="text" class="input is-large" placeholder="passphrase" v-model="passphrase">
+                        <input type="text" class="input is-large" placeholder="passphrase" v-model="passphrase" @change="changePassphrase">
                     </div>
-                    <div v-if="implementation == 'HOTP'" class="column">
+                    <div v-if="this.implementation == 'HOTP'" class="column">
                         <button class="button is-info is-large" @click="increaseCounter()">Event</button>
                     </div>
                     <div class="column">
-                        <button class="button is-primary is-large" @click="calculateOTP(passphrase, seed)">Compute</button>
+                        <button class="button is-primary is-large" @click="calculateOTP()">Compute</button>
                     </div>
                     <div class="column">
-                        <button class="button is-primary is-large is-link" @click="submitForm(passphrase, seed)">Validate</button>
+                        <button class="button is-primary is-large is-link" @click="submitForm()">Validate</button>
                     </div>
                 </div>
             </div>
@@ -40,10 +40,10 @@
         name: 'Inputs',
         data() {
             return {
-                seed: 127,
-                passphrase: "passphrase",
-                implementation: "HOTP",
+                user: 'Nobody',
+                implementation: 'HOTP',
                 otp: "Not calculated",
+                passphrase: 'passphrase',
                 counter: 0,
                 timestamp: 0,
                 generator: require('otpauth'),
@@ -51,7 +51,7 @@
                     {email: 'pig@app.io'},
                     {email: 'wolf@app.io'}
                 ],
-                user: 'pig@app.io'
+                store: this.$root.vstore.store
             }
         },
         methods: {
@@ -62,7 +62,7 @@
                 let hotp = new this.generator.HOTP({
                     algorithm: 'SHA1',
                     digits: 6,
-                    counter: this.counter,
+                    counter: this.store.state.client_counter,
                     secret: passphrase
                 })
                 return hotp.generate()
@@ -76,76 +76,79 @@
                     timestamp: this.timestamp
                 });
 
-                // Generate TOTP token.
+                // Generate TOTP token. 
                 return totp.generate();
             },
-            calculateOTP(passphrase, seed){
-                if(this.implementation == "HOTP"){
-                    this.otp = this.HOTP(passphrase, seed);
+            calculateOTP(passphrase){
+                if(this.store.state.implementation == "HOTP"){
+                    this.store.setClientOTP(this.HOTP(this.store.state.passphrase, this.store.state.client_counter))
                 } else {
-                    this.otp = this.TOTP(passphrase);
+                    this.store.setClientOTP(this.TOTP(this.store.state.passphrase))
                 }
-                this.updateOTP()
             },
             increaseCounter(){
-                this.counter = this.counter + 1;
-                this.$emit('increase-counter', this.counter)
-            },
-            updateOTP(){
-                this.$emit('generate', this.otp)
+                var counter = this.store.getClientCounter();
+                this.store.setClientCounter(parseInt(counter) + 1)
             },
             changeImplementation(){
-                this.$emit('implementation', this.implementation);
+                this.store.state.implementation = this.implementation
             },
-            changeUser(user){
-                this.user = user
+            changeUser(){
+                this.store.state.user = this.user
+            },
+            changePassphrase(){
+                this.store.state.passphrase = this.passphrase
             },
             swal(options){
                 this.$swal(options)
             },
             submitForm(){
-                if(this.implementation == "HOTP"){
+                if(this.store.state.implementation == "HOTP"){
                     var options = {
                         method: 'POST', 
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            otp: this.otp,
+                            otp: this.store.getClientOTP(),
                             email: this.user
                         })
                     }
-
                     fetch(
                         "/api/hotp/validate",
                         options 
                     ).then((response) => {
-                        return response.text()
-                            .then((txt) => {
-                               return txt == "true" 
+                        return response.json()
+                            .then((json) => {
+                               return json 
                             })
-                    }).then((valid) => {
-                        if(valid){
+                    }).then((response) => {
+                        if(response.valid){
                             this.swal({
                                 title: 'Valid OTP 😁',
                                 text: 'The OTP you sent is valid.',
                                 type: 'success'
                             })
+
+                            this.store.state.server_hotp = response.last_otp
                         } else {
                             this.swal({ 
-                                title:'Invalid OTP 💩',
+                                title:'Invalid OTP 😵',
                                 text: 'The passphrase is wrong or you are out of sync',
                                 type: 'error'
                             })
                         }
                     })
+                    .catch((error) => {
+                        debugger;
+                    })
 
                 } 
 
-                if(this.implementation == "TOTP"){
+                if(this.store.state.implementation == "TOTP"){
                     var options = {
                         method: 'POST', 
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            otp: this.otp,
+                            otp: this.store.state.client_otp,
                             email: this.user
                         })
                     }
@@ -154,9 +157,9 @@
                         "/api/totp/validate",
                         options 
                     ).then((response) => {
-                        return response.text()
-                            .then((txt) => {
-                               return txt == "true" 
+                        return response.json()
+                            .then((json) => {
+                               return json
                             })
                     }).then((valid) => {
                         if(valid){
@@ -165,6 +168,8 @@
                                 text: 'The OTP you sent is valid.',
                                 type: 'success'
                             })
+
+
                         } else {
                             this.swal({ 
                                 title:'Invalid OTP 💩',
