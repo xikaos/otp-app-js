@@ -8,16 +8,6 @@
       driver: local
 
   services:
-    # Caching
-    cache:
-      image: redis:4.0
-      container_name: meu-otp-redis
-      command: --appendonly yes
-      volumes:
-        - meu-otp-redis-data:/data
-      ports:
-        - "6379:6379"
-
     app:
       image: ambientum/node:11
       container_name: meu-otp-app
@@ -36,3 +26,5 @@
         dockerfile: Proxy.Dockerfile
       ports:
         - 80:80
+      depends_on:
+        - app
