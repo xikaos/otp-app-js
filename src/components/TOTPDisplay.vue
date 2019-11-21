@@ -5,7 +5,7 @@
                 <div class="column has-text-centered">
                     <div class="box">
                         <h4 class="title is-4 has-text-info" id="client-timestamp__title">Client Timestamp</h4>
-                        <h5 class="title is-5 has-text-info" id="client-timestamp__value" title="timeDiff">{{ this.store.state.client_timestamp }}</h5>
+                        <h5 class="title is-5 has-text-info" id="client-timestamp__value" title="timeDiff">{{ this.store.getClientTimestamp() }}</h5>
                         <h4 class="subtitle is-4 has-text-info">Timestep</h4>
                         <h5 class="subtitle is-5 has-text-info">{{ clientTimestep }}</h5>   
                     </div>
@@ -21,7 +21,7 @@
                     <div class="column">
                         <div class="box has-text-centered">
                             <h4 class="title is-4 has-text-danger" id="server-timestamp__value">Server Timestamp</h4>
-                            <h5 class="title is-5 has-text-danger" id="server-timestamp__value">{{ this.store.state.server_timestamp }}</h5>
+                            <h5 class="title is-5 has-text-danger" id="server-timestamp__value">{{ this.store.getServerTimestamp() }}</h5>
                             <h4 class="subtitle is-4 has-text-danger" id="subtitle server-timestamp__title">Timestep</h4>
                             <h5 class="subtitle is-5 has-text-danger">{{ serverTimestep }}</h5>   
                         </div>
@@ -44,12 +44,12 @@
                 fetch('http://localhost/api/totp/params')
                     .then((res) => {
                         res.json().then((json) => {
-                            this.store.state.server_timestamp = json.timestamp;
+                            this.store.setServerTimestamp(json.timestamp);
                         });
                     })
             },
             getCurrentTimestamp(){
-                this.store.state.client_timestamp = new Date().getTime();
+                this.store.setClientTimestamp(new Date().getTime());
             }
 
         },
@@ -59,19 +59,19 @@
         },
         computed: {
             timeDiff(){
-                return this.store.state.client_timestamp - this.store.state.server_timestamp;
+                return this.store.getClientTimestamp() - this.store.getServerTimestamp();
             },
 
             clientTimestep(){
-                return Math.round(this.store.state.client_timestamp / 30);
+                return Math.round(this.store.getClientTimestamp() / 30);
             },
 
             serverTimestep(){
-                return Math.round(this.store.state.server_timestamp / 30);
+                return Math.round(this.store.getServerTimestamp() / 30);
             },
 
             diffTimestep(){
-                return (Math.round(this.store.state.client_timestamp / 30) - Math.round(this.store.state.server_timestamp / 30))
+                return (Math.round(this.store.getClientTimestamp() / 30) - Math.round(this.store.getServerTimestamp() / 30))
             }
         }       
     }
