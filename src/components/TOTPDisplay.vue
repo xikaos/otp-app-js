@@ -12,10 +12,10 @@
                 </div>
                     <div class="column has-text-centered">
                         <div class="box">
-                            <h4 class="title is-4 has-text-warning" id="client-timestamp__title">Time Diff</h4>
-                            <h5 class="title is-5 has-text-warning" id="client-timestamp__value">{{ timeDiff }}</h5>
-                            <h4 class="subtitle is-4 has-text-warning">Timestep</h4>
-                            <h5 class="subtitle is-5 has-text-warning">{{ diffTimestep }}</h5>   
+                            <h4 class="title is-4 has-text-success" id="client-timestamp__title">Time Diff</h4>
+                            <h5 class="title is-5 has-text-success" id="client-timestamp__value">{{ timeDiff }}</h5>
+                            <h4 class="subtitle is-4 has-text-success">Timestep</h4>
+                            <h5 class="subtitle is-5 has-text-success">{{ diffTimestep }}</h5>   
                         </div>
                     </div>
                     <div class="column">
