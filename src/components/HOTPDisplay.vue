@@ -11,7 +11,7 @@
                 <div class="column"> 
                     <div class="box has-text-centered">
                         <h4 class="title is-4 has-text-danger" id="server-counter__value">Server Counter</h4>
-                        <h5 class="title is-5 has-text-danger" id="server-counter__value">{{ this.store.getClientCounter() }}</h5>
+                        <h5 class="title is-5 has-text-danger" id="server-counter__value">{{ this.store.getServerCounter() }}</h5>
                     </div>
                 </div>
                 <div class="column">
@@ -34,20 +34,20 @@
             }
         },
         methods: {
-            pollServer(){
-                fetch('http://localhost/api/hotp/params')
-                    .then((res) => {
-                        return res.json().then((json) => {
-                            this.store.setServerCounter(json.counter);
-                            this.store.setLastHOTP(json.last_otp);
-                        });
-                    })
-            },
             syncClient(){
                 fetch('http://localhost/api/hotp/params')
                     .then((res) => {
                         return res.json().then((json) => {
                             this.store.setClientCounter(json.counter);
+                            this.store.setLastHOTP(json.last_otp);
+                        });
+                    })
+            },
+            pollServer(){
+                fetch('http://localhost/api/hotp/params')
+                    .then((res) => {
+                        return res.json().then((json) => {
+                            this.store.setServerCounter(json.counter);
                             this.store.setLastHOTP(json.last_otp);
                         });
                     })

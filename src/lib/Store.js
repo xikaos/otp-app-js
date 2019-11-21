@@ -1,3 +1,5 @@
+
+
 var store = {
     debug: true,
     state: {
@@ -17,26 +19,34 @@ var store = {
         passphrase: 'passphrase',
         user: 'None'
     },
+    getPassphrase(){
+        return this.state.passphrase;
+    },
+    setPassphrase(passphrase){
+        return this.state.passphrase = passphrase;
+    },
     getImplementation(){
         return this.state.implementation;
     },
     setImplementation(implementation){
         return this.state.implementation = implementation;
     },
-    setClientOTP(otp){
-        if(this.debug) console.log('SetClientOTP: Value {', this.state.client_otp, '}.') 
-        return this.state.client_otp = otp
+    setClientTOTP(otp){
+        return this.state.client_totp = otp
     },
-    getClientOTP(){
-        if(this.debug) console.log('getClientOTP: Value: {', this.state.client_otp, '}.')
-            return this.state.client_otp
+    getClientTOTP(){
+        return this.state.client_totp
+    },
+    getClientHOTP(){
+        return this.state.client_hotp
+    },
+    setClientHOTP(otp){
+        return this.state.client_hotp = otp 
     },
     setClientCounter(counter){
-        if(this.debug) console.log('setClientCounter: Value: {', this.state.client_counter, '}.')    
         return this.state.client_counter = counter
     },
     getClientCounter(){
-        if(this.debug) console.log('getClientCounter: Value: {', this.state.client_counter, '}.')    
         return this.state.client_counter;
     },
     getServerCounter(){
@@ -61,7 +71,7 @@ var store = {
         return this.state.last_hotp;
     },
     setLastHOTP(hotp){
-        return this.state.last_hotop = hotp;
+        return this.state.last_hotp = hotp;
     },
     getLastTOTP(){
         return this.state.last_totp;
@@ -74,6 +84,12 @@ var store = {
     },
     setUsers(users){
         return this.state.users = users;
+    },
+    getUser(){
+        return this.state.user;
+    },
+    setUser(user){
+        return this.state.user = user;
     }
 }
 

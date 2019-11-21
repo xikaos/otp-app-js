@@ -6,7 +6,7 @@
                     Your OTP is:
                 </h3>
                 <h4 class="title is-4">
-                    <span class="has-text-success" id="otp">{{ this.store.getClientOTP() }}</span>
+                    <span class="has-text-success" id="otp">{{ OTP }}</span>
                 </h4>
             </div>
         </div>
@@ -18,6 +18,15 @@
         data() {
             return {
                 store: this.$root.vstore.store
+            }
+        },
+        computed: {
+            OTP(){
+                if(this.store.getImplementation() == "HOTP"){
+                    return this.store.getClientHOTP();
+                } else {
+                    return this.store.getClientTOTP();
+                }
             }
         },
         name: 'OneTimePassword',
