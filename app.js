@@ -40,17 +40,22 @@ app.post('/api/totp/validate', function(req, res){
     let totp = new generator.TOTP({
         algorithm: 'SHA1',
         digits: 6,
-        period: 30,
+        period: 1,
         secret: user.password,
         timestamp: new Date().getTime()
     });
 
-    server_otp = totp.generate()
 
-    let is_valid = (client_otp == server_otp)
+    let diff = totp.validate({
+        token: client_otp,
+        window: 0
+    })
+
+
+    let is_valid = (diff == 0)
 
     if(is_valid){
-        last_totp = server_otp;
+        last_totp = totp.generate();
     }
 
     res.send(200, {valid: is_valid, last_valid: last_totp});
