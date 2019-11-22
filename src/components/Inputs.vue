@@ -138,7 +138,11 @@
                     }
                 })
                 .catch((error) => {
-                    debugger;
+                    this.swal({ 
+                        title:'Something is wrong 😵',
+                        text: 'The request returned an error to failed reach the server.',
+                        type: 'error'
+                    })
                 })
             }
         }
