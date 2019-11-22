@@ -62,7 +62,7 @@
                 let totp = new this.generator.TOTP({
                     algorithm: 'SHA1',
                     digits: 6,
-                    period: 1,
+                    period: 5,
                     secret: this.store.getPassphrase(),
                     timestamp: this.store.getClientTimestamp()
                 });

@@ -40,7 +40,7 @@ app.post('/api/totp/validate', function(req, res){
     let totp = new generator.TOTP({
         algorithm: 'SHA1',
         digits: 6,
-        period: 1,
+        period: 5,
         secret: user.password,
         timestamp: new Date().getTime()
     });
@@ -48,7 +48,7 @@ app.post('/api/totp/validate', function(req, res){
 
     let diff = totp.validate({
         token: client_otp,
-        window: 0
+        window: 1
     })
 
 
