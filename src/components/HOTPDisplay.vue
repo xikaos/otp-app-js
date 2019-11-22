@@ -55,7 +55,7 @@
         },
         mounted: function(){
             this.syncClient()
-            setInterval(this.pollServer, 500)
+            setInterval(this.pollServer, 333)
         }       
     }
 </script>
