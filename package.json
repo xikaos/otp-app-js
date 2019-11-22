@@ -12,6 +12,7 @@
     "core-js": "^3.3.2",
     "express": "^4.17.1",
     "otpauth": "^5.0.3",
+    "siege": "^0.2.0",
     "vue": "^2.6.10",
     "vue-sweetalert2": "^2.1.5"
   },

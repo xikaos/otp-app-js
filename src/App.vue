@@ -12,8 +12,8 @@
         </div>
       </section>
     </div>
-    <one-time-password :otp="otp"></one-time-password>
-    <hotp-display v-if="isHOTP && god_mode" :client_counter="this.counter"></hotp-display>
+    <one-time-password></one-time-password>
+    <hotp-display v-if="isHOTP && god_mode" :client_counter="this.store.getClientCounter()"></hotp-display>
     <totp-display v-if="isTOTP && god_mode"></totp-display>
     <inputs @implementation="changeDisplay" @generate="changeOTP"  @increase-counter="changeCounter" :timestamp="clientTimestamp"></inputs>
   </div>
@@ -35,7 +35,8 @@ export default {
       otp: 'Not generated yet',
       implementation: 'HOTP',
       god_mode: true,
-      counter: 0
+      counter: 0,
+      store: this.$root.vstore.store
     }
   },
   methods: {
@@ -52,10 +53,10 @@ export default {
   name: 'app',
   computed: {
     isHOTP: function(){
-      return this.implementation == 'HOTP'; 
+      return this.store.state.implementation == 'HOTP'; 
     },
     isTOTP: function(){
-      return this.implementation == 'TOTP';
+      return this.store.state.implementation == 'TOTP';
     },
 
     clientTimestamp: function(){
