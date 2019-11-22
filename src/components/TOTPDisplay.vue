@@ -59,7 +59,7 @@
         },
         computed: {
             timeDiff(){
-                return this.store.getClientTimestamp() - this.store.getServerTimestamp();
+                return Math.round(this.store.getClientTimestamp()) - Math.round(this.store.getServerTimestamp());
             },
 
             clientTimestep(){
