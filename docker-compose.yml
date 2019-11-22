@@ -34,5 +34,7 @@
       build:
         context: ./docker
         dockerfile: Proxy.Dockerfile
+      volumes:
+        - ./dist:/var/www/app
       ports:
         - 80:80
