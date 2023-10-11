@@ -19,7 +19,7 @@
 O objetivo da aplicação é demonstrar na prática o OTP e demonstrar possíveis ataques contra sua arquitetura e implementação.
 
 ## Proposta
-Através de uma aplicação web que irá agir como um gerador na arquitetura do OTP, o usuário poderá validar se o seu OTP gerado corresponde com o OTP gerado no servidor com a senha correspondente. A idéia é permitir que o usuário selecione a implementação desejada (TOTP, HOTP), insira sua senha e submeta a requisição. Também é necessário que as variáveis do servidor (janela de tempo,  contador e última senha válida) sejam exibidas para o cliente por questões de demonstração.
+Através de uma aplicação web que irá agir como um gerador na arquitetura do [OTP](https://en.wikipedia.org/wiki/One-time_password), o usuário poderá validar se o seu OTP gerado corresponde com o OTP gerado no servidor com a senha correspondente. A idéia é permitir que o usuário selecione a implementação desejada (TOTP, HOTP), insira sua senha e submeta a requisição. Também é necessário que as variáveis do servidor (janela de tempo,  contador e última senha válida) sejam exibidas para o cliente por questões de demonstração.
 
 ## Implementação
 
